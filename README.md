@@ -2,10 +2,12 @@
 
 How to use?
 
+installing:
 ```shell
 npm i encrypt-object-fields
 ```
 
+coding:
 ```js
 const encryptObjectFields = require('encrypt-object-fields')
 
