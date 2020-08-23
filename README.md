@@ -7,19 +7,23 @@ npm i encrypt-object-fields
 ```
 
 ```js
-const encryptObjectFields = require('encrypt-object-fields');
+const encryptObjectFields = require('encrypt-object-fields')
 
-// -- payload
-// object: {
-//     field: {
-//         subfield: 'this is my subfield'
-//     }
-//     otherfield: 'this is my other field'
-// }
+const object = {
+    field: {
+        subfield: 'this is my subfield'
+    },
+    otherfield: 'this is my other field'
+}
 
-const encryptedObjectFields = encryptObjectFields(object, ['object.field.subfield', 'object.otherfield']);
+async function showObject() {
+    const encryptedObjectFields = await encryptObjectFields(object, ['field.subfield', 'otherfield']);
 
-// -- result -> payload with encrypted fields
+    console.log(encryptedObjectFields);
+}
+
+showObject();
+// -- result
 // object: {
 //     field: {
 //         subfield: '65675324234kfghtnyuascfd'

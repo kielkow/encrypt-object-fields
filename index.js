@@ -11,19 +11,23 @@ module.exports = async (obj, arrayOfFields) => {
         }
 
         eval(
-            `var fn = async function() { 
-                const criptoParams = {
-                    "algoritm": "aes256",
-                    "secret": "samsungsds",
-                };
-
-                const cipher = await crypto.createCipher(criptoParams.algoritm ,criptoParams.secret);
-
-                let encrypted = cipher.update(${finalProp}, 'utf8', 'hex');
-
-                encrypted += cipher.final('hex');
-
-                ${finalProp} = encrypted;
+            `var fn = async function() {
+                try {
+                    const criptoParams = {
+                        "algoritm": "aes256",
+                        "secret": "encryptobjectfields",
+                    };
+    
+                    const cipher = await crypto.createCipher(criptoParams.algoritm ,criptoParams.secret);
+    
+                    let encrypted = cipher.update(${finalProp}, 'utf8', 'hex');
+    
+                    encrypted += cipher.final('hex');
+    
+                    ${finalProp} = encrypted;
+                } catch (err) {
+                    throw new Error(err.message || err);
+                }
             }`
         );
 
