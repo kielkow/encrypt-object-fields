@@ -10,5 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "crypto": "^1.0.1"
-  }
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
 }
