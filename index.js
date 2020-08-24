@@ -10,8 +10,13 @@ module.exports = async (obj, arrayOfFields) => {
             if (prop.includes('[') && prop.includes(']')) {
                 const splitPositionArray = prop.split("[");
 
-                finalProp = finalProp.concat(`['${splitPositionArray[0]}']`);
-                finalProp = finalProp.concat(`['${splitPositionArray[1].replace("]", "")}']`);
+                for (let i = 0; i < splitPositionArray.length; i++) {
+                    if (i === 0) {
+                        finalProp = finalProp.concat(`['${splitPositionArray[0]}']`);
+                    } else {
+                        finalProp = finalProp.concat(`['${splitPositionArray[i].replace("]", "")}']`);
+                    }
+                }
             } 
             else {
                 finalProp = finalProp.concat(`['${prop}']`);
