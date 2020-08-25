@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-module.exports = async (obj, arrayOfFields) => {
+async function getEncryptedObject(obj, arrayOfFields) {
     for (const field of arrayOfFields) {
         const props = field.split(".");
 
@@ -50,3 +50,11 @@ module.exports = async (obj, arrayOfFields) => {
 
     return obj;
 };
+
+module.exports = async (obj, arrayOfFields) => {
+    let encryptobject = JSON.parse(JSON.stringify(obj));
+
+    encryptobject = await getEncryptedObject(encryptobject, arrayOfFields);
+
+    return encryptobject;
+}
