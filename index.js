@@ -1,27 +1,13 @@
 const crypto = require('crypto');
+const _ = require('lodash');
 
 async function getEncryptedObject(obj, arrayOfFields) {
     for (const field of arrayOfFields) {
-        const props = field.split(".");
+        if (!field || field === "") continue;
 
-        let finalProp = "obj";
+        const fieldExists = _.get(obj, field);
 
-        for (const prop of props) {
-            if (prop.includes('[') && prop.includes(']')) {
-                const splitPositionArray = prop.split("[");
-
-                for (let i = 0; i < splitPositionArray.length; i++) {
-                    if (i === 0) {
-                        finalProp = finalProp.concat(`['${splitPositionArray[0]}']`);
-                    } else {
-                        finalProp = finalProp.concat(`['${splitPositionArray[i].replace("]", "")}']`);
-                    }
-                }
-            } 
-            else {
-                finalProp = finalProp.concat(`['${prop}']`);
-            }
-        }
+        if (!fieldExists) continue;
 
         eval(
             `var fn = async function() {
@@ -33,11 +19,11 @@ async function getEncryptedObject(obj, arrayOfFields) {
 
                     const cipher = await crypto.createCipher(criptoParams.algoritm ,criptoParams.secret);
 
-                    let encrypted = cipher.update(${finalProp}, 'utf8', 'hex');
+                    let encrypted = cipher.update(obj.${field}, 'utf8', 'hex');
 
                     encrypted += cipher.final('hex');
 
-                    ${finalProp} = encrypted;
+                    obj.${field} = encrypted;
                 }
                 catch (err) {
                     throw new Error(err.message || err);
