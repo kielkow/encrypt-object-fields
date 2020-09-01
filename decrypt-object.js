@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 const _ = require('lodash');
 
-async function decryptObject(obj, arrayOfFields) {
-    for (const field of arrayOfFields) {
+async function decryptObject(obj, fields) {
+    for (const field of fields) {
         if (!field || field === "") continue;
 
         const fieldExists = _.get(obj, field);
@@ -37,10 +37,10 @@ async function decryptObject(obj, arrayOfFields) {
     return obj;
 };
 
-module.exports = async (obj, arrayOfFields) => {
+module.exports = async (obj, fields) => {
     const encryptedobject = JSON.parse(JSON.stringify(obj));
 
-    const decryptedobject = await decryptObject(encryptedobject, arrayOfFields);
+    const decryptedobject = await decryptObject(encryptedobject, fields);
 
     return decryptedobject;
 }
