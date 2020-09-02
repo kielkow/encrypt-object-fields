@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const _ = require('lodash');
 
-async function encryptObject(obj, fields) {
+async function getEncryptedObject(obj, fields, arrays) {
     for (const field of fields) {
         if (!field || field === "") continue;
 
@@ -10,11 +10,11 @@ async function encryptObject(obj, fields) {
         if (!fieldExists) continue;
 
         eval(
-            `var fn = async function() {
+            `var fnFields = async function() {
                 try {
                     const criptoParams = {
-                        "algoritm": "aes256",
-                        "secret": "encryptobjectfields",
+                        algoritm: "aes256",
+                        secret: "encryptobjectfields",
                     };
 
                     const cipher = await crypto.createCipher(criptoParams.algoritm, criptoParams.secret);
@@ -31,16 +31,55 @@ async function encryptObject(obj, fields) {
             }`
         );
 
-        await fn();
+        await fnFields();
+    }
+
+    if (arrays) {
+        for (const array of arrays) {
+            const key = Object.keys(array)[0];
+            const props = Object.values(array)[0];
+
+            eval(
+                `var fnArrays = async function() {
+                    try {
+                        for (const element of obj.${key}) {
+                            const values = Object.keys(element);
+
+                            for (const value of values) {
+                                if (props.includes(value)) {
+                                    const criptoParams = {
+                                        algoritm: "aes256",
+                                        secret: "encryptobjectfields",
+                                    };
+
+                                    const cipher = await crypto.createCipher(criptoParams.algoritm, criptoParams.secret);
+
+                                    let encrypted = cipher.update(element[value], 'utf8', 'hex');
+
+                                    encrypted += cipher.final('hex');
+
+                                    element[value] = encrypted;
+                                }
+                            }
+                        }
+                    }
+                    catch (err) {
+                        throw new Error(err.message || err);
+                    }
+                }`
+            );
+
+            await fnArrays();
+        }
     }
 
     return obj;
 };
 
-module.exports = async (obj, fields) => {
-    const decryptedobject = JSON.parse(JSON.stringify(obj));
+module.exports = async (obj, fields, arrays) => {
+    let encryptobject = JSON.parse(JSON.stringify(obj));
 
-    const encryptedobject = await encryptObject(decryptedobject, fields);
+    encryptobject = await getEncryptedObject(encryptobject, fields, arrays);
 
-    return encryptedobject;
+    return encryptobject;
 }
