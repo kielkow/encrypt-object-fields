@@ -1,6 +1,6 @@
 {
   "name": "encrypt-object-fields",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "This package can encrypt especific fields from your object",
   "main": "index.js",
   "scripts": {
