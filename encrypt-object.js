@@ -16,7 +16,7 @@ async function getEncryptedObject(payload, fields) {
                             const values = Object.keys(element);
 
                             for (const value of values) {
-                                if (props.includes(value)) {
+                                if (props.includes(value) && element[value]) {
                                     const criptoParams = {
                                         algoritm: "aes256",
                                         secret: "encryptobjectfields",
@@ -46,22 +46,24 @@ async function getEncryptedObject(payload, fields) {
 
             eval(
                 `var encrypt = async function() {
-                    try {
-                        const criptoParams = {
-                            algoritm: "aes256",
-                            secret: "encryptobjectfields",
-                        };
-    
-                        const cipher = await crypto.createCipher(criptoParams.algoritm, criptoParams.secret);
-    
-                        let encrypted = cipher.update(payload.${field}, 'utf8', 'hex');
-    
-                        encrypted += cipher.final('hex');
-    
-                        payload.${field} = encrypted;
-                    }
-                    catch (err) {
-                        throw new Error(err.message || err);
+                    if (payload.${field}) {
+                        try {
+                            const criptoParams = {
+                                algoritm: "aes256",
+                                secret: "encryptobjectfields",
+                            };
+        
+                            const cipher = await crypto.createCipher(criptoParams.algoritm, criptoParams.secret);
+        
+                            let encrypted = cipher.update(payload.${field}, 'utf8', 'hex');
+        
+                            encrypted += cipher.final('hex');
+        
+                            payload.${field} = encrypted;
+                        }
+                        catch (err) {
+                            throw new Error(err.message || err);
+                        }
                     }
                 }`
             );
