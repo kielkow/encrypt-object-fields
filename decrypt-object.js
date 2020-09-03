@@ -1,52 +1,22 @@
 const crypto = require('crypto');
 const _ = require('lodash');
 
-async function decryptObject(obj, fields, arrays) {
+async function getDecryptedObject(payload, fields) {
     for (const field of fields) {
-        if (!field || field === "") continue;
+        if (!field || field === "" || field === {}) continue;
 
-        const fieldExists = _.get(obj, field);
-
-        if (!fieldExists) continue;
-
-        eval(
-            `var fnFields = async function() {
-                try {
-                    const criptoParams = {
-                        algoritm: "aes256",
-                        secret: "encryptobjectfields",
-                    };
-
-                    const decipher = await crypto.createDecipher(criptoParams.algoritm, criptoParams.secret);
-
-                    let decrypted = decipher.update(obj.${field}, 'hex', 'utf8');
-
-                    decrypted += decipher.final('utf8');
-
-                    obj.${field} = decrypted;
-                }
-                catch (err) {
-                    throw new Error(err.message || err);
-                }
-            }`
-        );
-
-        await fnFields();
-    }
-
-    if (arrays) {
-        for (const array of arrays) {
-            const key = Object.keys(array)[0];
-            const props = Object.values(array)[0];
+        if (typeof field === "object") {
+            const key = Object.keys(field)[0];
+            const props = Object.values(field)[0];
 
             eval(
-                `var fnArrays = async function() {
+                `var decrypt = async function() {
                     try {
-                        for (const element of obj.${key}) {
+                        for (const element of payload.${key}) {
                             const values = Object.keys(element);
 
                             for (const value of values) {
-                                if (props.includes(value)) {
+                                if (props.includes(value) && element[value]) {
                                     const criptoParams = {
                                         algoritm: "aes256",
                                         secret: "encryptobjectfields",
@@ -69,17 +39,45 @@ async function decryptObject(obj, fields, arrays) {
                 }`
             );
 
-            await fnArrays();
+            await decrypt();
+        }
+        else {
+            if (!_.get(payload, field)) continue;
+
+            eval(
+                `var decrypt = async function() {
+                    if (payload.${field}) {
+                        try {
+                            const criptoParams = {
+                                algoritm: "aes256",
+                                secret: "encryptobjectfields",
+                            };
+        
+                            const decipher = await crypto.createDecipher(criptoParams.algoritm, criptoParams.secret);
+
+                            let decrypted = decipher.update(payload.${field}, 'hex', 'utf8');
+        
+                            decrypted += decipher.final('utf8');
+        
+                            payload.${field} = decrypted;
+                        }
+                        catch (err) {
+                            throw new Error(err.message || err);
+                        }
+                    }
+                }`
+            );
+    
+            await decrypt();
         }
     }
 
-    return obj;
+    return payload;
 };
 
-module.exports = async (obj, fields, arrays) => {
-    const encryptedobject = JSON.parse(JSON.stringify(obj));
-
-    const decryptedobject = await decryptObject(encryptedobject, fields, arrays);
-
-    return decryptedobject;
+module.exports = async (payload, fields) => {
+    return getDecryptedObject(
+        JSON.parse(JSON.stringify(payload)), 
+        fields
+    );
 }

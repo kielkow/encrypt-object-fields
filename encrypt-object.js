@@ -76,9 +76,8 @@ async function getEncryptedObject(payload, fields) {
 };
 
 module.exports = async (payload, fields) => {
-    let encryptobject = JSON.parse(JSON.stringify(payload));
-
-    encryptobject = await getEncryptedObject(encryptobject, fields);
-
-    return encryptobject;
+    return getEncryptedObject(
+        JSON.parse(JSON.stringify(payload)), 
+        fields
+    );
 }
