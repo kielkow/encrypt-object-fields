@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const _ = require('lodash');
 
 async function getEncryptedObject(payload, fields) {
     for (const field of fields) {
@@ -24,7 +23,7 @@ async function getEncryptedObject(payload, fields) {
 
                                     const cipher = await crypto.createCipher(criptoParams.algoritm, criptoParams.secret);
 
-                                    let encrypted = cipher.update(element[value], 'utf8', 'hex');
+                                    let encrypted = cipher.update(element[value].toString(), 'utf8', 'hex');
 
                                     encrypted += cipher.final('hex');
 
@@ -42,8 +41,6 @@ async function getEncryptedObject(payload, fields) {
             await encrypt();
         }
         else {
-            if (!_.get(payload, field)) continue;
-
             eval(
                 `var encrypt = async function() {
                     if (payload.${field}) {
@@ -55,7 +52,7 @@ async function getEncryptedObject(payload, fields) {
         
                             const cipher = await crypto.createCipher(criptoParams.algoritm, criptoParams.secret);
         
-                            let encrypted = cipher.update(payload.${field}, 'utf8', 'hex');
+                            let encrypted = cipher.update(payload.${field}.toString(), 'utf8', 'hex');
         
                             encrypted += cipher.final('hex');
         
@@ -67,7 +64,7 @@ async function getEncryptedObject(payload, fields) {
                     }
                 }`
             );
-    
+
             await encrypt();
         }
     }
@@ -77,7 +74,7 @@ async function getEncryptedObject(payload, fields) {
 
 module.exports = async (payload, fields) => {
     return getEncryptedObject(
-        JSON.parse(JSON.stringify(payload)), 
+        JSON.parse(JSON.stringify(payload)),
         fields
     );
 }

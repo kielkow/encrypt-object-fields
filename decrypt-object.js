@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const _ = require('lodash');
 
 async function getDecryptedObject(payload, fields) {
     for (const field of fields) {
@@ -24,7 +23,7 @@ async function getDecryptedObject(payload, fields) {
 
                                     const decipher = await crypto.createDecipher(criptoParams.algoritm, criptoParams.secret);
 
-                                    let decrypted = decipher.update(element[value], 'hex', 'utf8');
+                                    let decrypted = decipher.update(element[value].toString(), 'hex', 'utf8');
                 
                                     decrypted += decipher.final('utf8');
 
@@ -42,8 +41,6 @@ async function getDecryptedObject(payload, fields) {
             await decrypt();
         }
         else {
-            if (!_.get(payload, field)) continue;
-
             eval(
                 `var decrypt = async function() {
                     if (payload.${field}) {
@@ -55,7 +52,7 @@ async function getDecryptedObject(payload, fields) {
         
                             const decipher = await crypto.createDecipher(criptoParams.algoritm, criptoParams.secret);
 
-                            let decrypted = decipher.update(payload.${field}, 'hex', 'utf8');
+                            let decrypted = decipher.update(payload.${field}.toString(), 'hex', 'utf8');
         
                             decrypted += decipher.final('utf8');
         
