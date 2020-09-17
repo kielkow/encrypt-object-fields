@@ -6,7 +6,6 @@ async function getEncryptedObject(payload, fields) {
 
         if (typeof field === "object") {
             const key = Object.keys(field)[0];
-            const props = Object.values(field)[0];
 
             eval(
                 `var encrypt = async function() {
@@ -15,7 +14,14 @@ async function getEncryptedObject(payload, fields) {
                             const values = Object.keys(element);
 
                             for (const value of values) {
-                                if (props.includes(value) && element[value]) {
+                                if (
+                                    Object.values(field)[0].includes(value) && 
+                                    element[value] &&
+                                    element[value] !== "" &&
+                                    element[value] !== {} &&
+                                    element[value] !== null &&
+                                    element[value] !== undefined
+                                ) {
                                     const criptoParams = {
                                         algoritm: "aes256",
                                         secret: "encryptobjectfields",
@@ -43,7 +49,12 @@ async function getEncryptedObject(payload, fields) {
         else {
             eval(
                 `var encrypt = async function() {
-                    if (payload.${field}) {
+                    if (payload.${field} && 
+                        payload.${field} !== "" && 
+                        payload.${field} !== {} &&
+                        payload.${field} !== null &&
+                        payload.${field} !== undefined
+                    ) {
                         try {
                             const criptoParams = {
                                 algoritm: "aes256",
