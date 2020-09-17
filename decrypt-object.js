@@ -50,7 +50,8 @@ async function getDecryptedObject(payload, fields) {
         else {
             eval(
                 `var decrypt = async function() {
-                    if (payload.${field} && 
+                    if (
+                        payload.${field} && 
                         payload.${field} !== "" && 
                         payload.${field} !== {} &&
                         payload.${field} !== null &&

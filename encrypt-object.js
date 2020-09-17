@@ -49,7 +49,8 @@ async function getEncryptedObject(payload, fields) {
         else {
             eval(
                 `var encrypt = async function() {
-                    if (payload.${field} && 
+                    if (
+                        payload.${field} && 
                         payload.${field} !== "" && 
                         payload.${field} !== {} &&
                         payload.${field} !== null &&
