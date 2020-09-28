@@ -1,12 +1,14 @@
 const crypto = require('crypto');
+const _ = require('lodash');
 
 async function getDecryptedObject(payload, fields) {
+    if (typeof payload !== 'object' || _.isEmpty(payload)) return payload;
+
     for (const field of fields) {
-        if (!field || field === "" || field === {}) continue;
+        if (_.isEmpty(field)) continue;
 
         if (typeof field === "object") {
             const key = Object.keys(field)[0];
-            const props = Object.values(field)[0];
 
             eval(
                 `var decrypt = async function() {
@@ -15,14 +17,7 @@ async function getDecryptedObject(payload, fields) {
                             const values = Object.keys(element);
 
                             for (const value of values) {
-                                if (
-                                    Object.values(field)[0].includes(value) && 
-                                    element[value] &&
-                                    element[value] !== "" &&
-                                    element[value] !== {} &&
-                                    element[value] !== null &&
-                                    element[value] !== undefined
-                                ) {
+                                if (Object.values(field)[0].includes(value) && !_.isEmpty(element[value])) {
                                     const criptoParams = {
                                         algoritm: "aes256",
                                         secret: "encryptobjectfields",
@@ -50,13 +45,7 @@ async function getDecryptedObject(payload, fields) {
         else {
             eval(
                 `var decrypt = async function() {
-                    if (
-                        payload.${field} && 
-                        payload.${field} !== "" && 
-                        payload.${field} !== {} &&
-                        payload.${field} !== null &&
-                        payload.${field} !== undefined
-                    ) {
+                    if (!_.isEmpty(payload.${field})) {
                         try {
                             const criptoParams = {
                                 algoritm: "aes256",
