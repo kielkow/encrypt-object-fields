@@ -35,7 +35,7 @@ async function getEncryptedObject(payload, fields) {
                         }
                     }
                     catch (err) {
-                        throw new Error(err.message || err);
+                        throw new Error(err.stack || err);
                     }
                 }`
             );
@@ -61,7 +61,7 @@ async function getEncryptedObject(payload, fields) {
                             payload.${field} = encrypted;
                         }
                         catch (err) {
-                            throw new Error(err.message || err);
+                            throw new Error(err.stack || err);
                         }
                     }
                 }`

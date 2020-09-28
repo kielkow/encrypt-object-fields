@@ -35,7 +35,7 @@ async function getDecryptedObject(payload, fields) {
                         }
                     }
                     catch (err) {
-                        throw new Error(err.message || err);
+                        throw new Error(err.stack || err);
                     }
                 }`
             );
@@ -61,7 +61,7 @@ async function getDecryptedObject(payload, fields) {
                             payload.${field} = decrypted;
                         }
                         catch (err) {
-                            throw new Error(err.message || err);
+                            throw new Error(err.stack || err);
                         }
                     }
                 }`
