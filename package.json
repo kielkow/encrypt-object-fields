@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/kielkow/encrypt-object-fields#readme",
   "dependencies": {
-    "crypto": "^1.0.1",
-    "lodash": "^4.17.20"
+    "crypto": "^1.0.1"
   }
 }
