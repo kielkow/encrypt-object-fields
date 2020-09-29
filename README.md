@@ -35,9 +35,9 @@ async function showObject() {
         object, 
         [
             "first_field", 
-            "second_field.subfield", 
-            "array_of_fields[0].object_array",
-            "array_of_fields[1][0].enconding"
+            "subfield", 
+            "object_array",
+            "enconding"
         ]
     );
  
