@@ -1,11 +1,11 @@
 const crypto = require('crypto');
-const _ = require('lodash');
+const { isEmpty } = require('lodash');
 
 async function getDecryptedObject(payload, fields) {
-    if (typeof payload !== 'object' || _.isEmpty(payload)) return payload;
+    if (typeof payload !== 'object' || isEmpty(payload)) return payload;
 
     for (const field of fields) {
-        if (_.isEmpty(field)) continue;
+        if (isEmpty(field)) continue;
 
         if (typeof field === "object") {
             const key = Object.keys(field)[0];
@@ -17,7 +17,7 @@ async function getDecryptedObject(payload, fields) {
                             const values = Object.keys(element);
 
                             for (const value of values) {
-                                if (Object.values(field)[0].includes(value) && !_.isEmpty(element[value])) {
+                                if (Object.values(field)[0].includes(value) && !isEmpty(element[value])) {
                                     const criptoParams = {
                                         algoritm: "aes256",
                                         secret: "encryptobjectfields",
@@ -45,7 +45,7 @@ async function getDecryptedObject(payload, fields) {
         else {
             eval(
                 `var decrypt = async function() {
-                    if (!_.isEmpty(payload.${field})) {
+                    if (!isEmpty(payload.${field})) {
                         try {
                             const criptoParams = {
                                 algoritm: "aes256",
